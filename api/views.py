@@ -30,7 +30,7 @@ import pytz
 utc = pytz.utc
 
 
-def campagin(request):
+def campaign(request):
 	return render(request,'index.html')
 
 
@@ -101,11 +101,11 @@ class UserTokenAPIView(RetrieveDestroyAPIView):
 def removebg(request):
 	if request.method=='GET':
 		access_token=request.headers['token']
-		print(access_token)
 		adds=[]
 		app_secret = 'db4b3037cd105cfd23b6032aecd2c3ff'
 		app_id = '263805807945856'
-		id = 'act_2770121319724389'
+		# id = 'act_2770121319724389'
+		id = 'act_' + request.GET.get('userId')
 		FacebookAdsApi.init(access_token=access_token)
 
 		fields = [
@@ -126,7 +126,7 @@ def removebg(request):
 			}
 			data1.append(data)
 		print(data1)
-		
+
 		return JsonResponse(data1, safe=False)
 	else:
 		return HttpResponse('not found')
@@ -136,11 +136,13 @@ def removebg(request):
 def getadset(request):
 	if request.method == 'GET':
 		access_token=request.headers['token']
-		campaignId = request.GET.get('campignId')
+		campaignId = request.GET.get('campaignId')
 
+		# userId = request.GET.get('userId')
+		# id = 'act_2770121319724389'
+		print(access_token)
 		app_secret = 'db4b3037cd105cfd23b6032aecd2c3ff'
 		app_id = '263805807945856'
-		id = 'act_2770121319724389'
 		CAMPAIGN_ID = campaignId
 		FacebookAdsApi.init(access_token=access_token)
 		fields = ['name','start_time','end_time','targeting']
@@ -158,9 +160,10 @@ def getadset(request):
 			print(orginalid)
 			try:
 				print('---------------exit')
-				gets=AdsetOrignal.objects.get(id=orginalid)
+				gets=AdsetOrignal.objects.filter(id=orginalid)
 				print('>>>>>>>>',gets)
-				if gets:
+				if list(gets) != []:
+					gets = gets[0]
 					#updte data in database
 					AdsetOrignal.objects.filter(id=orginalid).update(start_time=start_time,end_time=end_time)
 				else:
@@ -180,23 +183,21 @@ def getadset(request):
 		#end date then update adset orginal locations
 		print('----------------today',today)
 		for i in data1:
-		  ids=i['id']
-		  orignallocation= AdsetOrignal.objects.filter(id=ids)
-		  adsts=Adset.objects.filter(id=ids)
-		  for i in adsts:
-		  	end_times=i.end_time
-		  	print('end_times-----',end_times)
-		  	if end_times<= today:
-		  		for orignallo in orignallocation:
-		  			targeting=orignallo.targeting
-		  		fields = ['targeting']
-		  		params = {'targeting':targeting}
-		  		# print(params)
-		  		AdSet(ids).api_update(fields=fields,params=params,)
-		  		print('change orignal location adset',ids)
-		  		Adset.objects.filter(id=ids).delete()
-		  	else:
-		  		print('end date is greter today date')
+			ids=i['id']
+			orignallocation= AdsetOrignal.objects.filter(id=ids)
+			adsts=Adset.objects.filter(id=ids)
+			for i in adsts:
+				end_times=i.end_time
+				if end_times<= today:
+					for orignallo in orignallocation:
+						targeting=orignallo.targeting
+						fields = ['targeting']
+						params = {'targeting':targeting}
+						AdSet(ids).api_update(fields=fields,params=params,)
+						print('change orignal location adset',ids)
+						Adset.objects.filter(id=ids).delete()
+				else:
+					print('end date is greter today date')
 		#end code enddate update addset location
         # updte add set locaions usegin start date time
 		for i in data1:
@@ -214,7 +215,7 @@ def getadset(request):
 		  		print('updte  location adset',ids)
 		  	else:
 		  		print('start_time is greter today date')
-		#end code update adset        
+		#end code update adset
 		return Response(data1)
 	else:
 		return HttpResponse('not found')
@@ -279,7 +280,7 @@ def update_ad_set_date(request):
 	if request.method == 'POST':
 		print('----------------------------------')
 		access_token=request.headers['token']
-		
+
 		received_json_data = json.loads(request.body)
 		endDate = received_json_data['end_time']
 		startDate = received_json_data['start_time']
@@ -325,8 +326,8 @@ def update_ad_set_targeting(request):
 		fields = ['targeting']
 		print(fields)
 		params = {
-		'targeting': {'geo_locations':{'custom_locations':[  
-          {  
+		'targeting': {'geo_locations':{'custom_locations':[
+          {
             "radius":30,
             "latitude":latitude,
             "longitude":longitude
@@ -361,8 +362,8 @@ def update_ad_set_data(request):
 		longitude = float(longitude)
 
 		adsetId = request.GET.get('adsetId')
-		targetings={'targeting': {'geo_locations':{'custom_locations':[  
-	        	{  
+		targetings={'targeting': {'geo_locations':{'custom_locations':[
+	        	{
 	            "radius":30,
 	            "latitude":latitude,
 	            "longitude":longitude
@@ -402,5 +403,50 @@ def updated_adset(request):
 			}
 			data1.append(data)
 		return Response(data1)
+	else:
+		return HttpResponse('not found')
+
+
+@api_view(['GET'])
+def update_ad_pr_one_hours(request):
+	print('Testing Update')
+
+
+@api_view(['POST'])
+def update_ad_set_mylocations(request):
+	if request.method == 'POST':
+		print('----------------------------------')
+		access_token=request.headers['token']
+		received_json_data = json.loads(request.body)
+		print('ddddddata ',received_json_data)
+		end_time = received_json_data['end_time']
+		start_time = received_json_data['start_time']
+		latitude = received_json_data['location']['lati']
+		latitude = float(latitude)
+		longitude = received_json_data['location']['long']
+		longitude = float(longitude)
+		adsetId = request.GET.get('adsetId')
+		app_secret = 'db4b3037cd105cfd23b6032aecd2c3ff'
+		app_id = '263805807945856'
+		id = 'act_2770121319724389'
+		FacebookAdsApi.init(access_token=access_token)
+		fields = ['start_time','end_time']
+		params = {
+			'start_time':start_time,
+			'end_time':end_time,
+			'targeting': {'geo_locations':{'custom_locations':[  
+	        	{  
+	            "radius":30,
+	            "latitude":latitude,
+	            "longitude":longitude
+	        }]},},
+	        
+		}
+		updateadset= AdSet(adsetId).api_update(
+				fields=fields,
+				params=params,
+				)
+		print(updateadset)    
+		return Response({'status':'True','message':'adset update set in 1 hours'})
 	else:
 		return HttpResponse('not found')

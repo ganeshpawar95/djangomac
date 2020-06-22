@@ -6,13 +6,13 @@ from django.conf.urls import  url
 import json
 
 urlpatterns = [
-    path('campagin',campagin,name='campagin'),
+    path('campaign',campaign,name='campaign'),
 
 	path('users/', UserRegistrationAPIView.as_view(), name="list"),
     path('users/login/', UserLoginAPIView.as_view(), name="login"),
     path('tokens/<key>/', UserTokenAPIView.as_view(), name="token"),
 
-    path('get_campagin/',removebg,name='getcampagin'),
+    path('get_campaign/',removebg,name='getcampaign'),
 
     path('get_ad_set/',getadset,name='getadset'),
     path('create_adset/',create_adset,name='create_adset'),
@@ -25,5 +25,7 @@ urlpatterns = [
 
     path('updated_adset',updated_adset,name='updated_adset')
 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('update_ad_pr_one_hours',update_ad_pr_one_hours,name='update_ad_pr_one_hours'),
+    path('update_ad_set_mylocations',update_ad_set_mylocations,name='update_ad_set_mylocations'),
 
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
