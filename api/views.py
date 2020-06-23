@@ -15,7 +15,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveDestroyAPIView
-from .models import Post, Adset, AdsetOrignal
+from .models import Post, Adset, AdsetOrignal,Adset_updte_hours
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, TokenSerializer
 from django.http import JsonResponse
 import json
@@ -412,6 +412,7 @@ def update_ad_pr_one_hours(request):
 	print('Testing Update')
 
 
+
 @api_view(['POST'])
 def update_ad_set_mylocations(request):
 	if request.method == 'POST':
@@ -426,27 +427,52 @@ def update_ad_set_mylocations(request):
 		longitude = received_json_data['location']['long']
 		longitude = float(longitude)
 		adsetId = request.GET.get('adsetId')
+		user_id=received_json_data['user_id']
 		app_secret = 'db4b3037cd105cfd23b6032aecd2c3ff'
 		app_id = '263805807945856'
 		id = 'act_2770121319724389'
+		# adsetId=23844754263620207
+		# start_time='2020-07-06 23:33:00'
+		# end_time='2020-08-06 23:33:00'
+		targetings={'targeting': {'geo_locations':{'custom_locations':[  
+	        	{  
+	            "radius":30,
+	            "latitude":26.8467088,
+	            "longitude":80.9461592
+	        }]},},}
+		# user_id=121
+		access_token='EAAHIb6WDZBIYBALkhpdevyb25DqUAj7C53KWNT9nWQ6o4pnIKcblMHx9HqHj0UjMisw9lJdxW8jE2hyGZCAmXFPZA0OEqT6Bmh7aa6sMhTtmn8k2U9yauf7PTfUPbkFkZB7LCg2j72FZC34XJrOFKcAHyu1HaGZADQk5hAlamXDuZCR5ucX3owyTcdCcwXaZAIWZBknaSYkSecAZDZD'
 		FacebookAdsApi.init(access_token=access_token)
 		fields = ['start_time','end_time']
 		params = {
-			'start_time':start_time,
-			'end_time':end_time,
+			# 'start_time':start_time,
+			'end_time':'2020-07-06 23:33:00',
 			'targeting': {'geo_locations':{'custom_locations':[  
 	        	{  
 	            "radius":30,
-	            "latitude":latitude,
-	            "longitude":longitude
+	            "latitude":26.8467088,
+	            "longitude":80.9461592
 	        }]},},
 	        
 		}
+		try:
+				print('---------------exit')
+				gets=Adset_updte_hours.objects.filter(id=adsetId)
+				if list(gets) != []:
+					gets = gets[0]
+					#updte data in database
+					print('updte ad set')
+					Adset_updte_hours.objects.filter(id=adsetId).update(start_time=start_time,end_time=end_time,targeting=targetings,access_token=access_token,user_id=user_id)
+				else:
+					print('created ad set')
+					Adset_updte_hours.objects.create(id=adsetId,start_time=start_time,end_time=end_time,access_token=access_token,targeting=targetings,user_id=user_id)
+		except Adset_updte_hours.DoesNotExist:
+				Adset_updte_hours.objects.create(id=adsetId,start_time=start_time,end_time=end_time,targeting=targetings,access_token=access_token,user_id=user_id)
+				print('---------------------create')
 		updateadset= AdSet(adsetId).api_update(
 				fields=fields,
 				params=params,
 				)
-		print(updateadset)    
 		return Response({'status':'True','message':'adset update set in 1 hours'})
 	else:
 		return HttpResponse('not found')

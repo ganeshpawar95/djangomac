@@ -40,3 +40,11 @@ class AdsetOrignal(models.Model):
     start_time=models.DateTimeField()
     end_time=models.DateTimeField()
     targeting=JSONField(max_length=200)
+
+class Adset_updte_hours(models.Model):
+    id=models.BigIntegerField(primary_key=True)
+    user_id=models.BigIntegerField()
+    access_token=models.CharField(max_length=1000)
+    start_time=models.DateTimeField()
+    end_time=models.DateTimeField()
+    targeting=JSONField(max_length=200)

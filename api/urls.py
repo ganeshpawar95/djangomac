@@ -23,7 +23,7 @@ urlpatterns = [
     path('update_ad_set_targeting',update_ad_set_targeting,name='update_ad_set_targeting'),
     path('update_ad_set_data',update_ad_set_data,name='update_ad_set_data'),
 
-    path('updated_adset',updated_adset,name='updated_adset')
+    path('updated_adset',updated_adset,name='updated_adset'),
 
     path('update_ad_pr_one_hours',update_ad_pr_one_hours,name='update_ad_pr_one_hours'),
     path('update_ad_set_mylocations',update_ad_set_mylocations,name='update_ad_set_mylocations'),
