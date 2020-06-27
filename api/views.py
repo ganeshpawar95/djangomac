@@ -437,8 +437,8 @@ def update_ad_set_mylocations(request):
 		targetings={'targeting': {'geo_locations':{'custom_locations':[  
 	        	{  
 	            "radius":30,
-	            "latitude":26.8467088,
-	            "longitude":80.9461592
+	            "latitude":latitude,
+	            "longitude":longitude
 	        }]},},}
 		# user_id=121
 		access_token='EAAHIb6WDZBIYBALkhpdevyb25DqUAj7C53KWNT9nWQ6o4pnIKcblMHx9HqHj0UjMisw9lJdxW8jE2hyGZCAmXFPZA0OEqT6Bmh7aa6sMhTtmn8k2U9yauf7PTfUPbkFkZB7LCg2j72FZC34XJrOFKcAHyu1HaGZADQk5hAlamXDuZCR5ucX3owyTcdCcwXaZAIWZBknaSYkSecAZDZD'
@@ -450,8 +450,8 @@ def update_ad_set_mylocations(request):
 			'targeting': {'geo_locations':{'custom_locations':[  
 	        	{  
 	            "radius":30,
-	            "latitude":26.8467088,
-	            "longitude":80.9461592
+	            "latitude":latitude,
+	            "longitude":longitude
 	        }]},},
 	        
 		}
