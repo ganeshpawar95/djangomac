@@ -17,7 +17,7 @@ django-jsonfield==1.4.0
 django-nose==1.4.6
 django-rest-auth==0.9.5
 django-templated-mail==1.1.1
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 djangorestframework-jwt==1.11.0
 djangorestframework-simplejwt==4.4.0
 djoser==2.0.3
